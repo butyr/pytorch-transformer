@@ -121,22 +121,22 @@ class Trainer:
             for i, batch in enumerate(tqdm(self.eval_dataloader)):
                 batch_src, batch_tgt = batch
                 batch_src = batch_src.to(device)
-                batch_tgt = batch_src.to(device)
+                batch_tgt = batch_tgt.to(device)
+
+                outputs = self.model(batch_src, batch_tgt)
+
+                """
                 batch_dummy = torch.zeros(
                     batch_tgt.shape+(self.vocab_size,)
                 ).to(device)
                 outputs = self._predict_loop(batch_src, batch_dummy)
+                """
 
                 valid_loss += float(self.loss_fn(
                     outputs.reshape(-1, self.vocab_size),
                     batch_tgt.reshape(-1)
                 ))
                 bleu += self._get_bleu_score(outputs, batch_tgt)
-
-                del outputs
-                del batch_src
-                del batch_tgt
-                torch.cuda.empty_cache()
 
                 if i >= self.eval_size-1:
                     break
